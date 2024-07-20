@@ -1,16 +1,9 @@
-use std::env;
-use std::fs::write;
-use std::process::exit;
-
+use conda_dep_check::*;
+use serde_json::to_value;
 fn main() {
-    let github_output_path = env::var("GITHUB_OUTPUT").unwrap();
-
-    let args: Vec<String> = env::args().collect();
-    let error = &args[1];
-
-    if !error.is_empty() {
-        eprintln!("Error: {error}");
-        write(github_output_path, format!("error={error}")).unwrap();
-        exit(1);
-    }
+    let env_file = discover_environment_file().expect("No env files were discovered.");
+    let manifest = Manifest::new(env_file)
+        .expect("The env file could not be read.")
+        .parse_env_file();
+    println!("{:?}", to_value(manifest));
 }

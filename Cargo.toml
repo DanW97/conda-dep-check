@@ -5,4 +5,12 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.67"
 
+[dependencies]
+glob = "0.3.1"
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.120"
+serde_repr = "0.1.19"
+serde_with = "3.9.0"
+yaml-rust2 = "0.8.0"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
