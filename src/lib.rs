@@ -74,6 +74,8 @@ impl Manifest {
             ..Default::default()
         }
     }
+
+    pub fn submit_dependency_graph(self) {}
 }
 
 // Field in the test json
