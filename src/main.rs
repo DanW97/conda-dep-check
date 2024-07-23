@@ -1,6 +1,11 @@
-use conda_dep_check::{discover_environment_file, Manifest};
-use reqwest::Error;
+use conda_dep_check::{discover_environment_file, Manifest, Snapshot};
+use reqwest::{
+    header::{HeaderValue, USER_AGENT},
+    Error,
+};
+use serde::Deserialize;
 use serde_json::to_value;
+use std::{env, fs::File};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -8,18 +13,28 @@ async fn main() -> Result<(), Error> {
     let manifest = Manifest::new(env_file)
         .expect("The env file could not be read.")
         .parse_env_file();
-    // println!("{:?}", to_value(manifest));
-
+    let snapshot = Snapshot::new(manifest);
+    let token = env::var("GITHUB_TOKEN").expect("Could no find a token.");
+    let request_url = format!(
+        "https://api.github.com/repos/{repo}/dependency-graph/snapshots",
+        repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info!")
+    );
     let client = reqwest::Client::new();
     let res = client
-        .post("https://api.github.com/repos/DanW97/conda-dep-check/dependency-graph/snapshots")
+        .post(request_url)
         .header(reqwest::header::ACCEPT, "application/vnd.github+json")
-        .header("Authorization", "Bearer TOKEN")
+        .header(USER_AGENT, HeaderValue::from_static("reqwest"))
+        .header("Authorization", format!("Bearer {token}"))
         .header("X-GitHub-Api-Version", "2022-11-28")
-        .json(&manifest)
+        .header("Content-Type", "application/vnd.github+json")
+        .json(&snapshot)
         .send()
         .await?;
+
     println!("{:?}", res);
+
+    let file = File::create("test2.json").expect("Could not write file");
+    serde_json::to_writer(file, &snapshot);
 
     Ok(())
 }

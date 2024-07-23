@@ -1,7 +1,77 @@
+use chrono::Local;
 use glob::glob;
 use serde::{Deserialize, Serialize};
+use std::env;
 use std::{collections::HashMap, fs, io, path::PathBuf};
 use yaml_rust2::YamlLoader;
+
+// Contains everything needed for the request
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Snapshot {
+    scanned: String,
+    sha: String,
+    version: usize,
+    job: Job,
+    #[serde(rename = "ref")]
+    branch_ref: String,
+    detector: Detector,
+    manifests: HashMap<String, Manifest>,
+}
+
+impl Snapshot {
+    pub fn new(manifest: Manifest) -> Self {
+        let scanned = Local::now().format("%Y-%m-%dT%H:%M:%Sz").to_string();
+        // TODO the action needs to be able to pick this up
+        let sha = env::var("COMMIT_HASH").expect("Could not parse commit hash.");
+        let version = 0;
+        let job = Job::default();
+        let branch_ref = env::var("GITHUB_REF").expect("Could not parse branch ref");
+        let detector = Detector::default();
+        let mut manifests = HashMap::new();
+        manifests.insert(manifest.name.clone(), manifest);
+        Snapshot {
+            scanned,
+            sha,
+            version,
+            job,
+            branch_ref,
+            detector,
+            manifests,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Job {
+    correlator: String,
+    id: String,
+}
+
+impl Default for Job {
+    fn default() -> Self {
+        let workflow = env::var("GITHUB_WORKFLOW").expect("Could not parse workflow name.");
+        let action_name = env::var("GITHUB_JOB").expect("Could not parse action name.");
+        let correlator = format!("{workflow}_{action_name}");
+        let id = env::var("GITHUB_JOB").expect("Could not parse job ID.");
+        Job { correlator, id }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Detector {
+    name: String,
+    version: String,
+    url: String,
+}
+impl Default for Detector {
+    fn default() -> Self {
+        let name = env::var("CARGO_PKG_NAME").expect("Can't parse name");
+        let version = env::var("CARGO_PKG_VERSION").expect("Can't parse version");
+        let url = "https://github.com/DanW97/conda-dep-check".to_string();
+
+        Detector { name, version, url }
+    }
+}
 
 // This gets sent as a REST thing to the dependency API if using yaml
 #[derive(Serialize, Deserialize, Default, Debug)]
@@ -13,10 +83,11 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    // TODO determine how/ should I set the name for this env
     pub fn new(env_file: PathBuf) -> io::Result<Self> {
         let env_file = EnvFile::new(env_file.to_str().unwrap())?;
+        let name = env_file.env_file.clone();
         Ok(Manifest {
+            name,
             env_file,
             ..Default::default()
         })
@@ -29,7 +100,6 @@ impl Manifest {
             fs::read_to_string(self.env_file.env_file.clone()).expect("Could not read yaml file.");
         let env_file_contents =
             YamlLoader::load_from_str(&content).expect("Unable to parse env file");
-        // println!("{:?}", env_file_contents);
         let env_file_content = &env_file_contents[0];
         // Conda entries are located in the `dependencies` tag and are all but last entry if we treat it as a vector
         for package in env_file_content["dependencies"].as_vec().unwrap() {
@@ -70,8 +140,7 @@ impl Manifest {
 
         Manifest {
             resolved: entries,
-            env_file: self.env_file,
-            ..Default::default()
+            ..self
         }
     }
 
