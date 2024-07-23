@@ -2,10 +2,6 @@ name: conda-dep-check
 description: Check conda dependencies
 author: dan <dtw545@student.bham.ac.uk>
 inputs:
-  error:
-    description: 'The error message to display, if any'
-    required: false
-    default: ''
   token:
     description: 'The GitHub token to use for downloading the action, defaults to workflow token'
     required: true
@@ -33,15 +29,15 @@ runs:
 
     - name: Get Action Version
       id: get_action_version
-      shell: pwsh
+      shell: bash
       run: |
-        $finalComponent = Split-Path -Leaf ${{ github.action_path }}
-        if ($finalComponent -eq "${{ env.ACTION_REPO }}") {
-          $version = ""
-        } else {
-          $version = $finalComponent
-        }
-        Write-Output "version=$version" >> $Env:GITHUB_OUTPUT
+        finalComponent=$(basename "${GITHUB_ACTION_PATH}")
+        if [[ "$finalComponent" == "$ACTION_REPO" ]]; then
+          version=""
+        else
+          version="$finalComponent"
+        fi
+        echo "version=$version" >> "$GITHUB_OUTPUT"
 
     - name: Add action version to env
       shell: bash

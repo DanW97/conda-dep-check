@@ -21,7 +21,6 @@ pub struct Snapshot {
 impl Snapshot {
     pub fn new(manifest: Manifest) -> Self {
         let scanned = Local::now().format("%Y-%m-%dT%H:%M:%Sz").to_string();
-        // TODO the action needs to be able to pick this up
         let sha = env::var("COMMIT_SHA").expect("Could not parse commit hash.");
         let version = 0;
         let job = Job::default();
@@ -69,7 +68,7 @@ impl Default for Detector {
         let version = env::var("PKG_VERSION").expect("Can't parse version");
         let url = format!(
             "https://github.com/{repo}",
-            repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info!")
+            repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info.")
         );
 
         Detector { name, version, url }
@@ -231,13 +230,34 @@ impl Default for Entry {
 #[cfg(test)]
 mod test {
 
+    use std::env;
+
     use serde_json::{json, to_value, Value};
 
-    use crate::{EnvFile, Manifest};
+    use crate::{Detector, EnvFile, Job, Manifest};
+
+    #[test]
+    // TODO update
+    fn test_job() {
+        let job = Job::default();
+        assert_eq!(job.id, "");
+        assert_eq!(job.correlator, "");
+    }
+
+    #[test]
+    fn test_detector() {
+        let detector = Detector::default();
+        assert_eq!(detector.name, "cargo-dep-check");
+        assert_eq!(
+            detector.version,
+            env::var("CARGO_PKG_VERSION").expect("Failed to get version.")
+        );
+        assert_eq!(detector.url, "https://github.com/DanW97/conda-dep-check/");
+    }
 
     #[test]
     fn test_env_file() {
-        let cwd = std::env::current_dir().unwrap();
+        let cwd = env::current_dir().unwrap();
         let env_file_location = cwd.join("test/environment.yaml");
         let env_file = EnvFile::new(env_file_location.to_str().unwrap());
         assert!(env_file.is_ok());

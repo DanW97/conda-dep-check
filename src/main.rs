@@ -15,7 +15,7 @@ fn main() -> Result<(), Error> {
     let token = env::var("GITHUB_TOKEN").expect("Could no find a token.");
     let request_url = format!(
         "https://api.github.com/repos/{repo}/dependency-graph/snapshots",
-        repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info!")
+        repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info.")
     );
     let client = reqwest::blocking::Client::new();
     let res = client

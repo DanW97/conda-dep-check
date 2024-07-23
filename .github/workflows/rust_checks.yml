@@ -4,14 +4,45 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Action Version
+        id: get_action_version
+        shell: bash
+        run: |
+          finalComponent=$(basename "${GITHUB_ACTION_PATH}")
+          if [[ "$finalComponent" == "$ACTION_REPO" ]]; then
+            version=""
+          else
+            version="$finalComponent"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Set reusable variables
+        shell: bash
+        run: |
+          echo "ACTION_REPO=conda-dep-check" >> $GITHUB_ENV
+          echo "ACTION_ORG=DanW97" >> $GITHUB_ENV
+          echo "BINARY_NAME=conda-dep-check" >> $GITHUB_ENV
+          echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "PKG_VERSION=${{ steps.get_action_version.outputs.version }}" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
       - name: Update Rust
         run: |
+          # Act's Ubuntu image doesn't include rustup, install it to enable local testing.
+          if ! command -v rustup &> /dev/null
+          then
+            echo "Installing Rust"
+            curl https://sh.rustup.rs -sSf | sh
+            source "$HOME/.cargo/env"
+          fi
           rustup override set stable
           rustup update stable
+
       - name: Run tests
         run: cargo test
+
       - name: Lint
         run: cargo clippy
+
       - name: Check formatting
         run: cargo fmt --check
