@@ -22,7 +22,7 @@ impl Snapshot {
     pub fn new(manifest: Manifest) -> Self {
         let scanned = Local::now().format("%Y-%m-%dT%H:%M:%Sz").to_string();
         // TODO the action needs to be able to pick this up
-        let sha = env::var("GITHUB_SHA").expect("Could not parse commit hash.");
+        let sha = env::var("COMMIT_SHA").expect("Could not parse commit hash.");
         let version = 0;
         let job = Job::default();
         let branch_ref = env::var("GITHUB_REF").expect("Could not parse branch ref");

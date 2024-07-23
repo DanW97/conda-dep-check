@@ -24,6 +24,7 @@ runs:
         echo "action_repo=conda-dep-check" >> $GITHUB_ENV
         echo "action_org=DanW97" >> $GITHUB_ENV
         echo "binary_name=conda-dep-check" >> $GITHUB_ENV
+        export COMMIT_HASH=$(git rev-parse HEAD)
 
     - name: Add binary extension
       shell: bash
