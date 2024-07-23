@@ -1,14 +1,12 @@
+use std::{env, fs::File};
+
 use conda_dep_check::{discover_environment_file, Manifest, Snapshot};
 use reqwest::{
     header::{HeaderValue, USER_AGENT},
     Error,
 };
-use serde::Deserialize;
-use serde_json::to_value;
-use std::{env, fs::File};
 
-#[tokio::main]
-async fn main() -> Result<(), Error> {
+fn main() -> Result<(), Error> {
     let env_file = discover_environment_file().expect("No env files were discovered.");
     let manifest = Manifest::new(env_file)
         .expect("The env file could not be read.")
@@ -19,7 +17,7 @@ async fn main() -> Result<(), Error> {
         "https://api.github.com/repos/{repo}/dependency-graph/snapshots",
         repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info!")
     );
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let res = client
         .post(request_url)
         .header(reqwest::header::ACCEPT, "application/vnd.github+json")
@@ -28,13 +26,12 @@ async fn main() -> Result<(), Error> {
         .header("X-GitHub-Api-Version", "2022-11-28")
         .header("Content-Type", "application/vnd.github+json")
         .json(&snapshot)
-        .send()
-        .await?;
+        .send()?;
 
     println!("{:?}", res);
 
     let file = File::create("test2.json").expect("Could not write file");
-    serde_json::to_writer(file, &snapshot);
+    let _ = serde_json::to_writer(file, &snapshot);
 
     Ok(())
 }

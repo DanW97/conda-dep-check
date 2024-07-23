@@ -8,12 +8,11 @@ rust-version = "1.67"
 [dependencies]
 chrono = "0.4.38"
 glob = "0.3.1"
-reqwest = { version = "0.12.5", features = ["json"] }
+reqwest = { version = "0.12.5", features = ["json", "blocking"] }
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"
 serde_repr = "0.1.19"
 serde_with = "3.9.0"
-tokio = { version = "1.38.1", features = ["full"] }
 yaml-rust2 = "0.8.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
