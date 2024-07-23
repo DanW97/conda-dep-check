@@ -24,7 +24,7 @@ runs:
         echo "action_repo=conda-dep-check" >> $GITHUB_ENV
         echo "action_org=DanW97" >> $GITHUB_ENV
         echo "binary_name=conda-dep-check" >> $GITHUB_ENV
-        export COMMIT_SHA=$(git rev-parse HEAD)
+        echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
     - name: Add binary extension
       shell: bash
@@ -54,4 +54,4 @@ runs:
     - name: Run Action
       shell: bash
       id: run
-      run: echo $COMMIT_SHA; ./${{ runner.os }}/${{ env.binary_name }} "${{ inputs.error }}"
+      run: echo $COMMIT_SHA; ./${{ runner.os }}/${{ env.binary_name }}
