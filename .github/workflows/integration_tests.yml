@@ -5,6 +5,7 @@ on:
   workflow_run:
     workflows: ["Release"]
     types: ["completed"]
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
