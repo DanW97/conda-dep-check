@@ -65,9 +65,12 @@ struct Detector {
 }
 impl Default for Detector {
     fn default() -> Self {
-        let name = env::var("CARGO_PKG_NAME").expect("Can't parse name");
-        let version = env::var("CARGO_PKG_VERSION").expect("Can't parse version");
-        let url = "https://github.com/DanW97/conda-dep-check".to_string();
+        let name = env::var("BINARY_NAME").expect("Can't parse name");
+        let version = env::var("PKG_VERSION").expect("Can't parse version");
+        let url = format!(
+            "https://github.com/{repo}",
+            repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info!")
+        );
 
         Detector { name, version, url }
     }
