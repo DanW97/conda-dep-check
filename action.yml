@@ -31,13 +31,23 @@ runs:
       id: get_action_version
       shell: bash
       run: |
+        echo ${GITHUB_ACTION_PATH}
         finalComponent=$(basename "${GITHUB_ACTION_PATH}")
+        echo $finalComponent
         if [[ "$finalComponent" == "$ACTION_REPO" ]]; then
           version=""
         else
           version="$finalComponent"
         fi
         echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      $finalComponent = Split-Path -Leaf ${{ github.action_path }}
+        if ($finalComponent -eq "${{ env.ACTION_REPO }}") {
+          $version = ""
+        } else {
+          $version = $finalComponent
+        }
+        Write-Output "version=$version" >> $Env:GITHUB_OUTPUT
 
     - name: Add action version to env
       shell: bash
