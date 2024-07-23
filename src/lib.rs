@@ -380,7 +380,7 @@ mod test {
                 "dependencies": []
             }
         },
-        "name": "",
+        "name": "/home/runner/work/conda-dep-check/conda-dep-check/test/environment.yaml",
         "file": {
             "source_location": std::env::current_dir().unwrap().join("test/environment.yaml").to_str()
         }
