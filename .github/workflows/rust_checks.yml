@@ -8,7 +8,7 @@ jobs:
         id: get_action_version
         shell: bash
         run: |
-          finalComponent=$(basename "${GITHUB_ACTION_PATH}")
+          finalComponent=$(basename $(realpath "${GITHUB_ACTION_PATH}"))
           if [[ "$finalComponent" == "$ACTION_REPO" ]]; then
             version=""
           else
