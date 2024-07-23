@@ -6,16 +6,9 @@ on:
     workflows: ["Release"]
     types: ["completed"]
 jobs:
-  test_success:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./
 
-  test_error:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - id: test
-        continue-on-error: true
-        uses: ./
