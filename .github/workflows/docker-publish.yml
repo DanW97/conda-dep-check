@@ -1,3 +1,4 @@
+name: Publish on Docker
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
