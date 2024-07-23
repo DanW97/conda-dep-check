@@ -41,14 +41,6 @@ runs:
         fi
         echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      $finalComponent = Split-Path -Leaf ${{ github.action_path }}
-        if ($finalComponent -eq "${{ env.ACTION_REPO }}") {
-          $version = ""
-        } else {
-          $version = $finalComponent
-        }
-        Write-Output "version=$version" >> $Env:GITHUB_OUTPUT
-
     - name: Add action version to env
       shell: bash
       run: |
