@@ -10,8 +10,8 @@ jobs:
       - id: get_version
         uses: battila7/get-version-action@v2
 
-      - run: |
-          echo "PKG_VERSION=${{ steps.get_version.outputs.version-without-v }}" >> $GITHUB_ENV
+      # - run: |
+      #     echo "PKG_VERSION=${{ steps.get_version.outputs.version-without-v }}" >> $GITHUB_ENV
 
       - name: Set reusable variables
         shell: bash
