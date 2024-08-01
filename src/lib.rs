@@ -252,7 +252,7 @@ mod test {
             detector.version,
            "main"
         );
-        assert_eq!(detector.url, "https://github.com/DanW97/conda-dep-check/");
+        assert_eq!(detector.url, "https://github.com/DanW97/conda-dep-check");
     }
 
     #[test]
