@@ -248,10 +248,7 @@ mod test {
     fn test_detector() {
         let detector = Detector::default();
         assert_eq!(detector.name, "conda-dep-check");
-        assert_eq!(
-            detector.version,
-           "main"
-        );
+        assert_eq!(detector.version, "main");
         assert_eq!(detector.url, "https://github.com/DanW97/conda-dep-check");
     }
 
