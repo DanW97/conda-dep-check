@@ -240,7 +240,7 @@ mod test {
     // TODO update
     fn test_job() {
         let job = Job::default();
-        assert_eq!(job.id, "");
+        assert_eq!(job.id, "checks");
         assert_eq!(job.correlator, "");
     }
 
