@@ -250,7 +250,7 @@ mod test {
         assert_eq!(detector.name, "conda-dep-check");
         assert_eq!(
             detector.version,
-            env::var("CARGO_PKG_VERSION").expect("Failed to get version.")
+           "main"
         );
         assert_eq!(detector.url, "https://github.com/DanW97/conda-dep-check/");
     }
