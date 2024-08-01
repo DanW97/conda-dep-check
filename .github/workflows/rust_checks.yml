@@ -4,19 +4,9 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Action Version
-        id: get_action_version
-        shell: bash
-        run: |
-          echo ${GITHUB_ACTION_PATH}
-          finalComponent=$(basename $(realpath ${GITHUB_ACTION_PATH}))
-          echo $finalComponent
-          if [[ "$finalComponent" == "$ACTION_REPO" ]]; then
-            version=""
-          else
-            version="$finalComponent"
-          fi
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Get action version
+      - id: get_version
+        uses: battila7/get-version-action@v2
 
       - name: Set reusable variables
         shell: bash
@@ -25,7 +15,7 @@ jobs:
           echo "ACTION_ORG=DanW97" >> $GITHUB_ENV
           echo "BINARY_NAME=conda-dep-check" >> $GITHUB_ENV
           echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "PKG_VERSION=${{ steps.get_action_version.outputs.version }}" >> $GITHUB_ENV
+          echo "PKG_VERSION=${{ steps.get_version.outputs.version-without-v }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
       - name: Update Rust
