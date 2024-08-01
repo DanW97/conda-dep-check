@@ -12,7 +12,7 @@ fn main() -> Result<(), Error> {
         .expect("The env file could not be read.")
         .parse_env_file();
     let snapshot = Snapshot::new(manifest);
-    let token = env::var("GITHUB_TOKEN").expect("Could no find a token.");
+    let token = env::var("GITHUB_TOKEN").expect("Could not find a token.");
     let request_url = format!(
         "https://api.github.com/repos/{repo}/dependency-graph/snapshots",
         repo = env::var("GITHUB_REPOSITORY").expect("Could not find repo info.")
