@@ -10,9 +10,6 @@ jobs:
         id: get_version
         uses: battila7/get-version-action@v2
 
-      # - run: |
-      #     echo "PKG_VERSION=${{ steps.get_version.outputs.version-without-v }}" >> $GITHUB_ENV
-
       - name: Set reusable variables
         shell: bash
         run: |
@@ -20,6 +17,7 @@ jobs:
           echo "ACTION_ORG=DanW97" >> $GITHUB_ENV
           echo "BINARY_NAME=conda-dep-check" >> $GITHUB_ENV
           echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "PKG_VERSION=${{ steps.get_version.outputs.version-without-v }}" >> $GITHUB_ENV
           
       - uses: actions/checkout@v4
       - name: Update Rust
