@@ -6,8 +6,8 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      # - name: Get action version
-      - id: get_version
+      - name: Get action version
+        id: get_version
         uses: battila7/get-version-action@v2
 
       # - run: |
