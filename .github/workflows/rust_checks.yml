@@ -1,5 +1,7 @@
 name: Unit tests, linting, and formatting
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
 jobs:
   checks:
     runs-on: ubuntu-latest
