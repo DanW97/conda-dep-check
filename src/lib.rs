@@ -241,13 +241,13 @@ mod test {
     fn test_job() {
         let job = Job::default();
         assert_eq!(job.id, "checks");
-        assert_eq!(job.correlator, "");
+        assert_eq!(job.correlator, "Tests_checks");
     }
 
     #[test]
     fn test_detector() {
         let detector = Detector::default();
-        assert_eq!(detector.name, "cargo-dep-check");
+        assert_eq!(detector.name, "conda-dep-check");
         assert_eq!(
             detector.version,
             env::var("CARGO_PKG_VERSION").expect("Failed to get version.")
